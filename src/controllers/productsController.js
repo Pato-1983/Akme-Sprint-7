@@ -156,8 +156,26 @@ const controller = {
 
 	update: async (req, res) => {
 
+        const results = validationResult(req)
+
+		
+		if (results.errors.length > 0) {
+            
+            try{
+                const categories = await db.Category.findAll()
+                const colors = await db.Color.findAll()
+                const product = await db.Product.findAll()
+
+			    return res.render('products/productEdit', {
+				    errors:results.mapped(),
+				    oldData:req.body, categories, colors, product})
+		
+            } catch (error) {
+            res.status(500).json({ error: error.message });
+        }}
+
         try {
-        
+            console.log('ok')
             let id = req.params.id
             let {name, description, price, categoryId, colorId} = req.body
             let newImages = []
